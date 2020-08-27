@@ -24,7 +24,6 @@ class Buyv2(Base):
         #https://github.com/Lu-Yi-Hsun/iqoptionapi/issues/6
       
         exp,idx=get_expiration_time(int(self.api.timesync.server_timestamp),duration)  
-        
         if idx<5:
             option="turbo"
         else:

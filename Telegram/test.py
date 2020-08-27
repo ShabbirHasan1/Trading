@@ -1,21 +1,13 @@
-import asyncio
-from telethon import TelegramClient
-from telethon.tl import functions, types
+from iqoptionapi.stable_api import IQ_Option
+import logging
+import time
+I_want_money=IQ_Option("ali.benali.pro@gmail.com","BDC252B29EAli")
+I_want_money.connect()
+I_want_money.change_balance("PRACTICE")
 
-api_id = 1677969
-api_hash = '7d1e424765873c884a799f4623957fbe'
+Money=1
+ACTIVES="EURUSD"
+ACTION="call"#or "put"
+expirations_mode= int(input('Enter number:'))
 
-client = TelegramClient('anon', api_id, api_hash)
-client.start()
-
-async def main():
-    channel = await client.get_entity(-1001296890742)
-    messages = await client.get_messages(channel, limit= 10) #pass your own args
-
-    #then if you want to get all the messages text
-    for x in messages:
-        print(x.text) #return message.text
-
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+check,id=I_want_money.buy(Money,ACTIVES,ACTION,expirations_mode)

@@ -3,10 +3,12 @@ from iqoptionapi.stable_api import IQ_Option
 import time
 import calendar
 import requests
-import json
+import json, logging
 import os
 from threading import Thread
 import sys
+
+logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(message)s')
 
 
 api_id = 1677969
@@ -24,7 +26,7 @@ class trading:
         if self.subscription == 'on':
             self.connected =IQ_Option(self.email,self.password)
             check,reason=self.connected.connect()
-            self.connected.change_balance("REAL")
+            self.connected.change_balance("PRACTICE")
             
             if check:
                 print("Bot is enabled now")   
@@ -50,7 +52,7 @@ class trading:
         print(self.active)
         print(self.action)
         print(self.duration)
-        if self.subscription == 'on':
+        if self.subscription == 'on':            
             check,id = self.connected.buy(1,self.active,self.action,self.duration)
             profit = self.connected.check_win_v3(id)
             if profit == 0:
@@ -89,18 +91,19 @@ class trading:
   
 
 token = input("Token:") or "123"
-email = input("Email:") or "test.iq.bot.ali.programmer@gmail.com"
-password = input("Password:") or "testiqbotaliprogrammer"
+email = input("Email:") or "ali.benali.pro@gmail.com"
+password = input("Password:") or "BDC252B29EAli"
 money = input("Amount:") or "1"
 myTrading = trading(token,email, password, money)
 myTrading.check_subscription()
 myTrading.connect()
 Thread(target=myTrading.reconnect, args=()).start()
 Thread(target=myTrading.recheck_subscription, args=()).start()
-  
+ 
+
 ############################################
 
-@client.on(events.NewMessage(chats=-1001296890742))
+@client.on(events.NewMessage(chats=-1001463916752))
 async def my_event_handler(event):
     message = event.raw_text.upper()
     print(message)
@@ -117,7 +120,16 @@ async def my_event_handler(event):
     else:
         myTrading.action = 'put'
     myTrading.active = message[0]+message[1]
-    myTrading.duration = int(message[3])
+    duration = int(message[3])
+    if duration == 1:
+        myTrading.duration = 1
+    elif duration == 5:
+        myTrading.duration = 65
+    elif duration == 15:
+        myTrading.duration = 75
+    elif duration == 25:
+        myTrading.duration = 80
+    
 client.start()
 client.run_until_disconnected()
 

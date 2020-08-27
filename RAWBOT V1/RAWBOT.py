@@ -67,7 +67,7 @@ class trading:
                 EXPIRATION = self.EXPIRATION
                 OPTION = self.OPTION
                 NOW = self.NOW
-                self.connected.change_balance("REAL")
+                self.connected.change_balance("PRACTICE")
                 check,id=self.connected.buy_by_raw_expirations(self.amount, ACTIVES, ACTION, OPTION,EXPIRATION)
                 self.connected.change_balance("PRACTICE")
                 profit = self.connected.check_win_v3(id)
