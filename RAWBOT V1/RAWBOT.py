@@ -6,16 +6,18 @@ import json, logging
 from threading import Thread
 from sys import exit
 from getpass import getpass
+from datetime import datetime
 
 logging.disable(level=(logging.DEBUG))
 
 class trading:
 
-    def __init__(self, token,email, password, amount):
+    def __init__(self, token,email, password, amount, stoploss):
         self.token = token
         self.password = password
         self.email = email
         self.amount = int(amount)
+        self.stoploss = int(stoploss) * -1
         self.total = 0
     def connect(self):
         if self.subscription['status'] == 'on':
@@ -54,6 +56,9 @@ class trading:
                         self.OPTION = trade['msg']["type_name"]
                         self.NOW = trade['msg']["now"]
                         if (trade['msg']['amount']/1000000) != self.amount:
+                            f = open("debug.txt", "a")
+                            f.write("{0} -- {1}\n".format(datetime.now().strftime("%Y-%m-%d %H:%M"), trade['msg']))
+                            f.close()
                             Thread(target=self.makeTrade).start()
                             passed.append(id)
                     self.connected.del_option_open_by_other_pc(id)
@@ -61,13 +66,13 @@ class trading:
 
     def makeTrade(self):
         if self.subscription['status'] == 'on':
-            if self.total > -10:
+            if self.total > self.stoploss:
                 ACTION = self.ACTION
                 ACTIVES = self.ACTIVES
                 EXPIRATION = self.EXPIRATION
                 OPTION = self.OPTION
                 NOW = self.NOW
-                self.connected.change_balance("PRACTICE")
+                self.connected.change_balance("REAL")
                 check,id=self.connected.buy_by_raw_expirations(self.amount, ACTIVES, ACTION, OPTION,EXPIRATION)
                 self.connected.change_balance("PRACTICE")
                 profit = self.connected.check_win_v3(id)
@@ -110,7 +115,8 @@ token = input("Token:") or ""
 email = input("Email:") or ""
 password = getpass("Password:") or ""
 money = input("Amount:") or "1"
-myTrading = trading(token,email, password, money)
+stoploss = input("stop loss:") or "10"
+myTrading = trading(token,email, password, money, stoploss)
 myTrading.check_subscription()
 myTrading.connect()
 Thread(target=myTrading.get_practice_trades).start()
